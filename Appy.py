@@ -8,9 +8,9 @@ from modele import prévoir_stock
 
 # CONFIGURATION DE LA PAGE
 st.set_page_config(
-    page_title="🧠 Assistant IA - Gestion des Stocks",
+    page_title="Assistant IA pour la Gestion Intelligente des Stocks",
     layout="centered",
-    page_icon="📦"
+    page_icon="📦💡"
 )
 
 # LOGO
@@ -18,17 +18,41 @@ logo = Image.open("logo.png")
 st.image(logo, width=150)
 
 # TITRE
-st.title("📦 Assistant IA pour la Gestion Intelligente des Stocks")
+st.title("💡SmartStocker")
 
 # INTRODUCTION
 st.markdown("""
-Bienvenue dans ton assistant intelligent de gestion de stock !  
-Ici, l’intelligence artificielle t’aide à :
-- 📊 prévoir les ventes futures,
-- 📦 recommander un stock optimal,
-- 🧠 analyser le comportement du produit.
+🧠 Bienvenue sur SmartStocker – Votre Solution Intelligente de Gestion de Stock
 
-_Crée par **Daniella** — Étudiante IA passionnée 🇨🇩_
+Optimisez vos stocks. Gagnez du temps. Anticipez la demande.
+
+Notre interface combine la puissance de l’intelligence artificielle avec une analyse fine de vos données produits pour vous offrir une gestion de stock simple, rapide et intelligente.
+Grâce à des algorithmes de prévision avancés, vous pouvez :
+
+✅ Prévoir les ventes avec précision
+✅ Réduire les ruptures et le surstock
+✅ Segmentez intelligemment vos produits
+✅ Calculer le stock optimal selon la demande réelle
+✅ Télécharger vos rapports en un clic (Excel ou PDF)
+
+🤖 Une IA à votre service
+
+Notre système apprend de vos données pour vous proposer des décisions automatisées ou assistées, adaptées à votre activité.
+Il ne s’agit pas seulement de suivre vos stocks, mais de les anticiper intelligemment.
+
+
+🌍 Une solution pensée pour vous
+
+Que vous soyez un commerçant local, un e-commerçant, ou une entreprise en pleine croissance, SmartStocker s’adapte à vos besoins.
+Développée avec une vision locale, notre plateforme est légère, intuitive et compatible avec vos outils existants.
+
+
+🚀 Lancez-vous dès aujourd’hui
+
+Gérez vos stocks comme les grandes entreprises, grâce à une IA simple, accessible et efficace.
+Faites confiance à la technologie pour vous aider à mieux gérer, mieux vendre, mieux décider.
+
+_Crée par **Daniella** — Étudiante IA passionnée_
 """)
 
 st.divider()
