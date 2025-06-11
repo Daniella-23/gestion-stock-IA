@@ -45,9 +45,6 @@ Que vous soyez un commerçant local, un e-commerçant, ou une entreprise en plei
 Développée avec une vision locale, notre plateforme est légère, intuitive et compatible avec vos outils existants.
 
 🚀 *Lancez-vous dès aujourd’hui*  
-Gérez vos stocks comme les grandes entreprises, grâce à une IA simple, accessible et efficace.  
-Faites confiance à la technologie pour vous aider à mieux gérer, mieux vendre, mieux décider.
-
 Crée par *Daniella* — Étudiante IA passionnée 🇨🇩
 """)
 
@@ -76,7 +73,7 @@ else:
             st.error("❌ Erreur dans le fichier. Vérifie le format.")
             df_input = None
 
-# ANALYSE DES DONNÉES
+# ANALYSE
 if df_input is not None and st.button("🔍 Lancer l’analyse"):
     result = prévoir_stock(df_input)
     st.success("✅ Analyse terminée avec succès")
@@ -99,7 +96,7 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     ax.legend()
     st.pyplot(fig)
 
-    # Téléchargement Excel
+    # 📥 Téléchargement Excel
     st.subheader("📥 Télécharger les résultats (Excel)")
     df_result = pd.DataFrame({
         "Prévision mois 1": [result['forecast'][0]],
@@ -113,7 +110,7 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     buffer = io.BytesIO()
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         df_result.to_excel(writer, index=False, sheet_name="Résultats")
-        writer.save()
+    buffer.seek(0)
 
     st.download_button(
         label="📥 Télécharger (Excel)",
@@ -122,7 +119,7 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    # Téléchargement PDF
+    # 📝 Téléchargement PDF
     st.subheader("📝 Télécharger les résultats (PDF)")
     pdf = FPDF()
     pdf.add_page()
