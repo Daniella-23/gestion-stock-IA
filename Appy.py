@@ -1,55 +1,135 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from modele import prévoir_stock  # ← importe ta fonction depuis le fichier modele.py
+from PIL import Image
+import io
+from fpdf import FPDF
+from modele import prévoir_stock
 
-st.set_page_config(page_title="Assistant IA - Gestion de Stock", layout="centered")
-st.title("📦 IA pour la Gestion Intelligente des Stocks")
+# CONFIGURATION DE LA PAGE
+st.set_page_config(
+    page_title="🧠 Assistant IA - Gestion des Stocks",
+    layout="centered",
+    page_icon="📦"
+)
 
-st.markdown("**Entrez les ventes mensuelles d’un produit ou importez un fichier pour obtenir :**")
-st.markdown("- 🔮 Des prévisions de ventes")
-st.markdown("- 📦 Un stock optimal recommandé")
-st.markdown("- 🧠 Un profil produit (via K-Means)")
+# LOGO
+logo = Image.open("logo.png")
+st.image(logo, width=150)
 
-option = st.radio("Méthode de saisie :", ["📝 Manuelle", "📁 Fichier CSV"])
+# TITRE
+st.title("📦 Assistant IA pour la Gestion Intelligente des Stocks")
+
+# INTRODUCTION
+st.markdown("""
+Bienvenue dans ton assistant intelligent de gestion de stock !  
+Ici, l’intelligence artificielle t’aide à :
+- 📊 prévoir les ventes futures,
+- 📦 recommander un stock optimal,
+- 🧠 analyser le comportement du produit.
+
+_Crée par **Daniella** — Étudiante IA passionnée 🇨🇩_
+""")
+
+st.divider()
+
+# SAISIE DES DONNÉES
+option = st.radio("Méthode de saisie :", ["📝 Entrer les ventes manuellement", "📁 Importer un fichier CSV"])
 
 df_input = None
 
-if option == "📝 Manuelle":
-    ventes_text = st.text_area("Entrez les ventes mensuelles (séparées par virgules) :", "12, 15, 9, 18, 0, 11")
+if option == "📝 Entrer les ventes manuellement":
+    ventes_text = st.text_area("Entre les ventes mensuelles séparées par des virgules :", "12, 15, 9, 18, 0, 11")
     try:
         ventes = [int(x.strip()) for x in ventes_text.split(",")]
         dates = pd.date_range(end=pd.Timestamp.today(), periods=len(ventes), freq='MS')
         df_input = pd.DataFrame({'date': dates, 'sales': ventes})
     except:
-        st.error("Format invalide.")
+        st.error("❌ Format invalide. Vérifie les chiffres et les virgules.")
+        df_input = None
+
 else:
-    file = st.file_uploader("Chargez un fichier CSV avec colonnes : date, sales", type=['csv'])
+    file = st.file_uploader("📁 Importe un fichier CSV avec colonnes : date, sales", type=['csv'])
     if file:
-        df_input = pd.read_csv(file)
         try:
+            df_input = pd.read_csv(file)
             df_input['date'] = pd.to_datetime(df_input['date'])
         except:
-            st.error("Erreur dans la colonne 'date'.")
+            st.error("❌ Erreur dans le fichier. Vérifie le format.")
             df_input = None
 
-if df_input is not None and st.button("🔍 Analyser"):
+# ANALYSE
+if df_input is not None and st.button("🔍 Lancer l’analyse"):
     result = prévoir_stock(df_input)
-    st.success("✅ Analyse terminée")
+    st.success("✅ Analyse terminée avec succès")
 
+    # Résultats
     st.subheader("📊 Résultats")
-    st.write(f"**Prévision (3 mois) :** {result['forecast']}")
-    st.write(f"**Stock de sécurité :** {result['stock_securite']} unités")
-    st.write(f"**Stock optimal :** {result['stock_optimal']} unités")
-    st.write(f"**Profil du produit (cluster) :** {result['profil_cluster']}")
-    
+    st.write(f"**Prévisions (3 prochains mois)** : `{result['forecast']}`")
+    st.write(f"**Stock de sécurité recommandé** : `{result['stock_securite']} unités`")
+    st.write(f"**Stock total optimal** : `{result['stock_optimal']} unités`")
+    st.write(f"**Profil du produit (cluster K-Means)** : `Cluster {result['profil_cluster']}`")
+
     # Graphique
-    st.subheader("📈 Graphique de prévision")
+    st.subheader("📈 Évolution des ventes + prévisions")
     fig, ax = plt.subplots()
     df_input.set_index('date')['sales'].plot(ax=ax, label="Historique", marker='o')
     future_dates = pd.date_range(start=df_input['date'].max() + pd.DateOffset(months=1), periods=3, freq='MS')
-    pd.Series(result['forecast'], index=future_dates).plot(ax=ax, label="Prévision", linestyle='--', color='red', marker='o')
+    pd.Series(result['forecast'], index=future_dates).plot(ax=ax, label="Prévision", linestyle='--', marker='o', color='red')
     ax.set_ylabel("Ventes")
     ax.set_xlabel("Date")
     ax.legend()
     st.pyplot(fig)
+
+    # EXCEL
+    st.subheader("📥 Télécharger les résultats (Excel)")
+    df_result = pd.DataFrame({
+        "Prévision mois 1": [result['forecast'][0]],
+        "Prévision mois 2": [result['forecast'][1]],
+        "Prévision mois 3": [result['forecast'][2]],
+        "Stock sécurité": [result['stock_securite']],
+        "Stock optimal": [result['stock_optimal']],
+        "Profil produit (cluster)": [result['profil_cluster']]
+    })
+
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        df_result.to_excel(writer, index=False, sheet_name="Résultats")
+        writer.save()
+
+    st.download_button(
+        label="📥 Télécharger (Excel)",
+        data=buffer,
+        file_name="resultats_stock.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    # PDF
+    st.subheader("📝 Télécharger les résultats (PDF)")
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Résultats - Prévision de Stock", ln=True, align='C')
+    pdf.ln(10)
+    pdf.cell(200, 10, txt=f"Prévision mois 1 : {result['forecast'][0]}", ln=True)
+    pdf.cell(200, 10, txt=f"Prévision mois 2 : {result['forecast'][1]}", ln=True)
+    pdf.cell(200, 10, txt=f"Prévision mois 3 : {result['forecast'][2]}", ln=True)
+    pdf.cell(200, 10, txt=f"Stock de sécurité : {result['stock_securite']} unités", ln=True)
+    pdf.cell(200, 10, txt=f"Stock optimal : {result['stock_optimal']} unités", ln=True)
+    pdf.cell(200, 10, txt=f"Profil produit (Cluster) : {result['profil_cluster']}", ln=True)
+
+    pdf_output = io.BytesIO()
+    pdf.output(pdf_output)
+    pdf_output.seek(0)
+
+    st.download_button(
+        label="📝 Télécharger (PDF)",
+        data=pdf_output,
+        file_name="resultats_stock.pdf",
+        mime="application/pdf"
+    )
+
+# FOOTER
+st.divider()
+st.markdown("💡 *Propulsé par Streamlit · Modèle ARIMA + K-Means · Projet IA de Daniella*")
