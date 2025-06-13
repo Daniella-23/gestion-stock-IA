@@ -22,7 +22,7 @@ st.title("💡 SmartStocker")
 
 # INTRODUCTION
 st.markdown("""
-🧠 *Bienvenue sur SmartStocker – Votre Solution Intelligente de Gestion de Stock*
+🧠 **Bienvenue sur SmartStocker – Votre Solution Intelligente de Gestion de Stock**
 
 Optimisez vos stocks. Gagnez du temps. Anticipez la demande.
 
@@ -36,16 +36,11 @@ Grâce à des algorithmes de prévision avancés, vous pouvez :
 ✅ Calculer le stock optimal selon la demande réelle  
 ✅ Télécharger vos rapports en un clic (Excel ou PDF)
 
-🤖 *Une IA à votre service*  
-Notre système apprend de vos données pour vous proposer des décisions automatisées ou assistées, adaptées à votre activité.  
-Il ne s’agit pas seulement de suivre vos stocks, mais de les anticiper intelligemment.
+🤖 **Une IA à votre service**  
+Notre système apprend de vos données pour vous proposer des décisions automatisées ou assistées, adaptées à votre activité.
 
-🌍 *Une solution pensée pour vous*  
-Que vous soyez un commerçant local, un e-commerçant, ou une entreprise en pleine croissance, SmartStocker s’adapte à vos besoins.  
-Développée avec une vision locale, notre plateforme est légère, intuitive et compatible avec vos outils existants.
-
-🚀 *Lancez-vous dès aujourd’hui*  
-Crée par *Daniella* — Étudiante IA passionnée 🇨🇩
+🌍 **Une solution pensée pour vous**  
+_Crée par **Daniella** — Étudiante IA passionnée 🇨🇩_
 """)
 
 st.divider()
@@ -80,10 +75,10 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
 
     # Résultats
     st.subheader("📊 Résultats")
-    st.write(f"*Prévisions (3 mois)* : {result['forecast']}")
-    st.write(f"*Stock de sécurité recommandé* : {result['stock_securite']} unités")
-    st.write(f"*Stock optimal recommandé* : {result['stock_optimal']} unités")
-    st.write(f"*Profil produit (cluster K-Means)* : Cluster {result['profil_cluster']}")
+    st.write(f"**Prévisions (3 mois)** : `{result['forecast']}`")
+    st.write(f"**Stock de sécurité recommandé** : `{result['stock_securite']} unités`")
+    st.write(f"**Stock optimal recommandé** : `{result['stock_optimal']} unités`")
+    st.write(f"**Profil produit (cluster K-Means)** : `Cluster {result['profil_cluster']}`")
 
     # Graphique
     st.subheader("📈 Évolution des ventes + prévisions")
@@ -133,9 +128,9 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     pdf.cell(200, 10, txt=f"Stock optimal : {result['stock_optimal']} unités", ln=True)
     pdf.cell(200, 10, txt=f"Profil produit (Cluster) : {result['profil_cluster']}", ln=True)
 
-    pdf_output = io.BytesIO()
-    pdf.output(pdf_output)
-    pdf_output.seek(0)
+    # ✅ Correction ici
+    pdf_bytes = pdf.output(dest="S").encode('latin-1')
+    pdf_output = io.BytesIO(pdf_bytes)
 
     st.download_button(
         label="📝 Télécharger (PDF)",
@@ -146,4 +141,4 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
 
 # FOOTER
 st.divider()
-st.markdown("💡 Propulsé par Streamlit · Modèle ARIMA + K-Means · Projet IA de Daniella")
+st.markdown("💡 *Propulsé par Streamlit · Modèle ARIMA + K-Means · Projet IA de Daniella*")
