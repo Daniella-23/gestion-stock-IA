@@ -122,8 +122,8 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     pdf.cell(200, 10, txt=f"Stock optimal : {result['stock_optimal']} unités", ln=True)
     pdf.cell(200, 10, txt=f"Profil produit (Cluster) : {result['profil_cluster']}", ln=True)
 
-    # ✅ Génération correcte du PDF pour Streamlit
-    pdf_bytes = pdf.output(dest="S").encode('latin-1')
+    # ✅ Conversion du PDF en mémoire (correct)
+    pdf_bytes = pdf.output(dest="S").encode('latin1')
     pdf_output = io.BytesIO(pdf_bytes)
 
     st.download_button(
@@ -133,6 +133,6 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
         mime="application/pdf"
     )
 
-# FOOTER
+# PIED DE PAGE
 st.divider()
 st.markdown("💡 *Propulsé par Streamlit · Modèle ARIMA + K-Means · Projet IA de Daniella*")
