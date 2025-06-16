@@ -26,8 +26,6 @@ st.markdown("""
 
 Optimisez vos stocks. Gagnez du temps. Anticipez la demande.
 
-Notre interface combine la puissance de l’intelligence artificielle avec une analyse fine de vos données produits pour vous offrir une gestion de stock simple, rapide et intelligente.
-
 Grâce à des algorithmes de prévision avancés, vous pouvez :
 
 ✅ Prévoir les ventes avec précision  
@@ -36,10 +34,6 @@ Grâce à des algorithmes de prévision avancés, vous pouvez :
 ✅ Calculer le stock optimal selon la demande réelle  
 ✅ Télécharger vos rapports en un clic (Excel ou PDF)
 
-🤖 **Une IA à votre service**  
-Notre système apprend de vos données pour vous proposer des décisions automatisées ou assistées, adaptées à votre activité.
-
-🌍 **Une solution pensée pour vous**  
 _Crée par **Daniella** — Étudiante IA passionnée 🇨🇩_
 """)
 
@@ -91,7 +85,7 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     ax.legend()
     st.pyplot(fig)
 
-    # 📥 Téléchargement Excel
+    # 📥 Télécharger Excel
     st.subheader("📥 Télécharger les résultats (Excel)")
     df_result = pd.DataFrame({
         "Prévision mois 1": [result['forecast'][0]],
@@ -114,8 +108,8 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    # 📝 Téléchargement PDF
-    st.subheader("📝 Télécharger les résultats (PDF)")
+    # 📄 Télécharger PDF
+    st.subheader("📄 Télécharger les résultats (PDF)")
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -128,12 +122,12 @@ if df_input is not None and st.button("🔍 Lancer l’analyse"):
     pdf.cell(200, 10, txt=f"Stock optimal : {result['stock_optimal']} unités", ln=True)
     pdf.cell(200, 10, txt=f"Profil produit (Cluster) : {result['profil_cluster']}", ln=True)
 
-    # ✅ Correction ici
+    # ✅ Génération correcte du PDF pour Streamlit
     pdf_bytes = pdf.output(dest="S").encode('latin-1')
     pdf_output = io.BytesIO(pdf_bytes)
 
     st.download_button(
-        label="📝 Télécharger (PDF)",
+        label="📄 Télécharger (PDF)",
         data=pdf_output,
         file_name="resultats_stock.pdf",
         mime="application/pdf"
